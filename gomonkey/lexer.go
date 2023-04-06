@@ -2,8 +2,8 @@ package gomonkey
 
 type Lexer struct {
     input string
-    position int
-    readPosition int
+    currenctPosition int
+    nextPosition int
     ch byte
 }
 
@@ -22,8 +22,9 @@ func (l* Lexer) NextToken() Token {
     switch l.ch {
     case '=':
         if l.peakChar() == '=' {
+            last_ch := l.ch
             l.readChar()
-            tok.Literal = "=="
+            tok.Literal = string(last_ch) + string(l.ch)
             tok.Type = EQUAL
         } else {
             tok = newToken(ASSIGN, l.ch)
@@ -50,8 +51,9 @@ func (l* Lexer) NextToken() Token {
         tok = newToken(ASTERISK, l.ch)
     case '!':
         if l.peakChar() == '=' {
+            last_ch := l.ch
             l.readChar()
-            tok.Literal = "!="
+            tok.Literal = string(last_ch) + string(l.ch)
             tok.Type = NOT_EQUAL
         } else {
             tok = newToken(BANG, l.ch)
@@ -61,8 +63,7 @@ func (l* Lexer) NextToken() Token {
     case '>':
         tok = newToken(GREAT_THAN, l.ch)
     case 0:
-        tok.Literal = ""
-        tok.Type = EOF
+        tok = eofToken()
     default:
         if isLetter(l.ch) {
             tok.Literal = l.readIdentifier() 
@@ -83,38 +84,38 @@ func (l* Lexer) NextToken() Token {
 }
 
 func (l* Lexer) readChar() {
-    if l.readPosition >= len(l.input) {
+    if l.nextPosition >= len(l.input) {
         l.ch = 0
     } else {
-        l.ch = l.input[l.readPosition]
+        l.ch = l.input[l.nextPosition]
     }
 
-    l.position = l.readPosition
-    l.readPosition += 1
+    l.currenctPosition = l.nextPosition
+    l.nextPosition += 1
 }
 
 func (l* Lexer) readNumber() string {
-    pos := l.position
+    pos := l.currenctPosition
     for isDigit(l.ch) {
         l.readChar()
     }
-    return l.input[pos:l.position]
+    return l.input[pos:l.currenctPosition]
 }
 
 func (l* Lexer) readIdentifier() string {
-    pos := l.position
+    pos := l.currenctPosition
     for isLetter(l.ch) {
         l.readChar()
     }
 
-    return l.input[pos:l.position]
+    return l.input[pos:l.currenctPosition]
 }
 
 func (l *Lexer) peakChar() byte {
-    if l.readPosition >= len(l.input) {
+    if l.nextPosition >= len(l.input) {
         return 0;
     } else {
-        return l.input[l.readPosition]
+        return l.input[l.nextPosition]
     }
 }
 

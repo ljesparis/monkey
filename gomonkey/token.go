@@ -53,6 +53,9 @@ func newToken(t TokenType, l byte) Token {
     }
 }
 
+func eofToken() Token {
+    return Token{Type: EOF, Literal: ""} 
+}
 
 var keywords = map[string]TokenType {
     "fn": FUNCTION,
