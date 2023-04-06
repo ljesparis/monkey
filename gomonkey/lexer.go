@@ -21,7 +21,13 @@ func (l* Lexer) NextToken() Token {
 
     switch l.ch {
     case '=':
-        tok = newToken(ASSIGN, l.ch)
+        if l.peakChar() == '=' {
+            l.readChar()
+            tok.Literal = "=="
+            tok.Type = EQUAL
+        } else {
+            tok = newToken(ASSIGN, l.ch)
+        }
     case ';':
         tok = newToken(SEMICOLON, l.ch)
     case '(':
@@ -39,9 +45,21 @@ func (l* Lexer) NextToken() Token {
     case '-':
         tok = newToken(MINUS, l.ch)
     case '/':
-        tok = newToken(DIV, l.ch)
+        tok = newToken(SLASH, l.ch)
     case '*':
-        tok = newToken(MULT, l.ch)
+        tok = newToken(ASTERISK, l.ch)
+    case '!':
+        if l.peakChar() == '=' {
+            l.readChar()
+            tok.Literal = "!="
+            tok.Type = NOT_EQUAL
+        } else {
+            tok = newToken(BANG, l.ch)
+        }
+    case '<':
+        tok = newToken(LESS_THAN, l.ch)
+    case '>':
+        tok = newToken(GREAT_THAN, l.ch)
     case 0:
         tok.Literal = ""
         tok.Type = EOF
@@ -92,6 +110,13 @@ func (l* Lexer) readIdentifier() string {
     return l.input[pos:l.position]
 }
 
+func (l *Lexer) peakChar() byte {
+    if l.readPosition >= len(l.input) {
+        return 0;
+    } else {
+        return l.input[l.readPosition]
+    }
+}
 
 func (l* Lexer) skipWhitespace() {
     for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {

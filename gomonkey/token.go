@@ -8,11 +8,17 @@ const (
     IDENTIFIER = "INDENTIFIER"
     INT = "INT"
 
+    BANG = "!"
     ASSIGN = "="
     PLUS = "+"
     MINUS = "-"
-    DIV = "/"
-    MULT = "*"
+    SLASH = "/"
+    ASTERISK = "*"
+
+    LESS_THAN = "<"
+    GREAT_THAN = ">"
+    EQUAL = "=="
+    NOT_EQUAL = "!="
 
     COMMA = ","
     SEMICOLON = ";"
@@ -24,6 +30,11 @@ const (
 
     FUNCTION = "FUNCTION"
     LET = "LET"
+    IF = "IF"
+    ELSE = "ELSE"
+    RETURN = "RETURN"
+    TRUE = "TRUE"
+    FALSE = "FALSE"
 )
 
 
@@ -46,6 +57,11 @@ func newToken(t TokenType, l byte) Token {
 var keywords = map[string]TokenType {
     "fn": FUNCTION,
     "let": LET,
+    "if": IF,
+    "else": ELSE,
+    "return": RETURN,
+    "true": TRUE,
+    "false": FALSE,
 }
 
 func LookupIdent(ident string) TokenType {

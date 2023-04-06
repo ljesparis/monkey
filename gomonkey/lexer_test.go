@@ -14,7 +14,7 @@ func TestNextTokenShouldBeOk(t *testing.T) {
         expected []gomonkey.Token
     } {
         {
-            `=+(){},;-/*`,
+            `=+(){},;-/*!<>`,
             []gomonkey.Token{
                 {gomonkey.ASSIGN, "="},
                 {gomonkey.PLUS, "+"},
@@ -25,8 +25,11 @@ func TestNextTokenShouldBeOk(t *testing.T) {
                 {gomonkey.COMMA, ","},
                 {gomonkey.SEMICOLON, ";"},
                 {gomonkey.MINUS, "-"},
-                {gomonkey.DIV, "/"},
-                {gomonkey.MULT, "*"},
+                {gomonkey.SLASH, "/"},
+                {gomonkey.ASTERISK, "*"},
+                {gomonkey.BANG, "!"},
+                {gomonkey.LESS_THAN, "<"},
+                {gomonkey.GREAT_THAN, ">"},
                 {gomonkey.EOF, ""},
             },
         },
@@ -42,9 +45,21 @@ func TestNextTokenShouldBeOk(t *testing.T) {
             },
         },
         {
-            `$`,
+            `$
+
+            5 == 10;
+            10 != 5;
+            `,
             []gomonkey.Token{
-                {gomonkey.ILLEGAL, "$"},             
+                {gomonkey.ILLEGAL, "$"},
+                {gomonkey.INT, "5"},             
+                {gomonkey.EQUAL, "=="},             
+                {gomonkey.INT, "10"},             
+                {gomonkey.SEMICOLON, ";"},             
+                {gomonkey.INT, "10"},             
+                {gomonkey.NOT_EQUAL, "!="},             
+                {gomonkey.INT, "5"},             
+                {gomonkey.SEMICOLON, ";"},             
                 {gomonkey.EOF, ""},
             },
         },
@@ -57,6 +72,15 @@ func TestNextTokenShouldBeOk(t *testing.T) {
             };
 
             let result = add(five, ten);
+            */!5;
+
+            5 < 10 > 5;
+
+            if (5 < 10) {
+                return false;
+            } else {
+                return true;
+            }
             `,
             []gomonkey.Token{
                 {gomonkey.LET, "let"},
@@ -94,6 +118,34 @@ func TestNextTokenShouldBeOk(t *testing.T) {
                 {gomonkey.IDENTIFIER, "ten"},
                 {gomonkey.RPAREN, ")"},
                 {gomonkey.SEMICOLON, ";"},
+                {gomonkey.ASTERISK, "*"},
+                {gomonkey.SLASH, "/"},
+                {gomonkey.BANG, "!"},
+                {gomonkey.INT, "5"},
+                {gomonkey.SEMICOLON, ";"},
+                {gomonkey.INT, "5"},
+                {gomonkey.LESS_THAN, "<"},
+                {gomonkey.INT, "10"},
+                {gomonkey.GREAT_THAN, ">"},
+                {gomonkey.INT, "5"},
+                {gomonkey.SEMICOLON, ";"},
+                {gomonkey.IF, "if"},
+                {gomonkey.LPAREN, "("},
+                {gomonkey.INT, "5"},
+                {gomonkey.LESS_THAN, "<"},
+                {gomonkey.INT, "10"},
+                {gomonkey.RPAREN, ")"},
+                {gomonkey.LBRACE, "{"},
+                {gomonkey.RETURN, "return"},
+                {gomonkey.FALSE, "false"},
+                {gomonkey.SEMICOLON, ";"},
+                {gomonkey.RBRACE, "}"},
+                {gomonkey.ELSE, "else"},
+                {gomonkey.LBRACE, "{"},
+                {gomonkey.RETURN, "return"},
+                {gomonkey.TRUE, "true"},
+                {gomonkey.SEMICOLON, ";"},
+                {gomonkey.RBRACE, "}"},
                 {gomonkey.EOF, ""},
             },
         },
