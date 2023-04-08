@@ -21,7 +21,7 @@ func (l *Lexer) NextToken() Token {
 	switch l.ch {
 	case 0:
 		tok = eofToken()
-	case '!', '=':
+	case '!', '=', '<', '>':
 		if l.peakChar() == '=' {
 			last_ch := l.ch
 			l.readChar()
@@ -31,7 +31,7 @@ func (l *Lexer) NextToken() Token {
 			tt := lookupOperator(string(l.ch))
 			tok = newToken(tt, l.ch)
 		}
-	case '+', '-', '/', '*', '<', '>', ';', '(', ')', '{', '}', ',':
+	case '+', '-', '/', '*', ';', '(', ')', '{', '}', ',':
 		tt := lookupOperator(string(l.ch))
 		tok = newToken(tt, l.ch)
 	default:

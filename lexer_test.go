@@ -13,7 +13,7 @@ func TestNextTokenShouldBeOk(t *testing.T) {
 		expected []monkey.Token
 	}{
 		{
-			`=+(){},;-/*!<>==!=`,
+			`=+(){},;-/*!<>>===!=<=`,
 			[]monkey.Token{
 				{monkey.ASSIGN, "="},
 				{monkey.PLUS, "+"},
@@ -29,8 +29,10 @@ func TestNextTokenShouldBeOk(t *testing.T) {
 				{monkey.BANG, "!"},
 				{monkey.LESS_THAN, "<"},
 				{monkey.GREAT_THAN, ">"},
+				{monkey.GEQ_THAN, ">="},
 				{monkey.EQ, "=="},
 				{monkey.NOT_EQ, "!="},
+				{monkey.LEQ_THAN, "<="},
 				{monkey.EOF, ""},
 			},
 		},

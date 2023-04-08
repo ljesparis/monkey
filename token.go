@@ -16,6 +16,8 @@ const (
 
 	LESS_THAN  = "<"
 	GREAT_THAN = ">"
+	LEQ_THAN   = "<="
+	GEQ_THAN   = ">="
 	EQ         = "=="
 	NOT_EQ     = "!="
 
@@ -75,6 +77,8 @@ var (
 		"=":  ASSIGN,
 		"==": EQ,
 		"!=": NOT_EQ,
+        "<=": LEQ_THAN,
+        ">=": GEQ_THAN,
 		";":  SEMICOLON,
 		"(":  LPAREN,
 		")":  RPAREN,
@@ -95,5 +99,5 @@ func lookupOperator(op string) TokenType {
 	if tok, ok := operators[op]; ok {
 		return tok
 	}
-	return ""
+	return ILLEGAL
 }
