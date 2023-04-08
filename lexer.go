@@ -1,4 +1,4 @@
-package gomonkey
+package monkey
 
 type Lexer struct {
 	input            string

@@ -1,4 +1,4 @@
-package gomonkey
+package monkey
 
 const (
 	ILLEGAL = "ILLEGAL"

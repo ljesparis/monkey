@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ljesparis/monkey/gomonkey"
+	"github.com/ljesparis/monkey"
 )
 
 func main() {
@@ -20,9 +20,9 @@ func main() {
 		}
 
 		line := scanner.Text()
-		l := gomonkey.NewLexer(line)
+		l := monkey.NewLexer(line)
 
-		for tok := l.NextToken(); tok.Type != gomonkey.EOF; tok = l.NextToken() {
+		for tok := l.NextToken(); tok.Type != monkey.EOF; tok = l.NextToken() {
 			fmt.Printf("%+v\n", tok)
 		}
 	}
