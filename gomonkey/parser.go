@@ -1,6 +1,25 @@
 package gomonkey
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
+
+const (
+	_ int = iota
+	LOWEST
+	EQUALS
+	LESSGREATER
+	SUM
+	PRODUCT
+	PREFIX
+	CALL
+)
+
+type (
+	prefixParseFn func() Expression
+	infixParseFn  func(Expression) Expression
+)
 
 type Parser struct {
 	l      *Lexer
@@ -8,6 +27,9 @@ type Parser struct {
 
 	curToken  Token
 	peekToken Token
+
+	prefixParseFns map[TokenType]prefixParseFn
+	infixParseFns  map[TokenType]infixParseFn
 }
 
 func NewParser(l *Lexer) *Parser {
@@ -16,7 +38,38 @@ func NewParser(l *Lexer) *Parser {
 	p.nextToken()
 	p.nextToken()
 
+	p.prefixParseFns = make(map[TokenType]prefixParseFn)
+
+	p.registerPrefix(IDENTIFIER, p.parseIdentifier)
+	p.registerPrefix(INT, p.parseIntegerLiteral)
+
 	return p
+}
+
+func (p *Parser) registerPrefix(tt TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tt] = fn
+}
+
+func (p *Parser) registerInfix(tt TokenType, fn infixParseFn) {
+	p.infixParseFns[tt] = fn
+}
+
+func (p *Parser) parseIdentifier() Expression {
+	return &Indentifier{Token: p.curToken, Value: p.curToken.Literal}
+}
+
+func (p *Parser) parseIntegerLiteral() Expression {
+	lit := &IntegerLiteral{Token: p.curToken}
+
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+	}
+
+	lit.Value = value
+	return lit
 }
 
 func (p *Parser) nextToken() {
@@ -54,9 +107,30 @@ func (p *Parser) parseStatement() Statement {
 	switch p.curToken.Type {
 	case LET:
 		return p.parseLetStatement()
+	case RETURN:
+		return p.parseReturnStatement()
 	default:
+		return p.parseExpressionStatement()
+	}
+}
+
+func (p *Parser) parseExpressionStatement() Statement {
+	stmt := &ExpressionStatement{Token: p.curToken}
+	stmt.Expression = p.parseExpression(LOWEST)
+	if p.peekTokenIs(SEMICOLON) {
+		p.nextToken()
+	}
+	return stmt
+}
+
+func (p *Parser) parseExpression(precedense int) Expression {
+	prefix := p.prefixParseFns[p.curToken.Type]
+	if prefix == nil {
 		return nil
 	}
+
+	leftExp := prefix()
+	return leftExp
 }
 
 func (p *Parser) parseLetStatement() Statement {
@@ -72,11 +146,25 @@ func (p *Parser) parseLetStatement() Statement {
 		return nil
 	}
 
+	// skip tokens until semicolon
 	for !p.curTokenIs(SEMICOLON) {
 		p.nextToken()
 	}
 
 	return stmt
+}
+
+func (p *Parser) parseReturnStatement() Statement {
+	stmt := ReturnStatement{Token: p.curToken}
+
+	p.nextToken()
+
+	// skip tokens until semicolon
+	for !p.curTokenIs(SEMICOLON) {
+		p.nextToken()
+	}
+
+	return &stmt
 }
 
 func (p *Parser) curTokenIs(tt TokenType) bool {
