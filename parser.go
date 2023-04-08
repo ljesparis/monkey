@@ -22,8 +22,8 @@ type (
 )
 
 var precedences = map[TokenType]int{
-	EQUAL:      EQUALS,
-	NOT_EQUAL:  EQUALS,
+	EQ:         EQUALS,
+	NOT_EQ:     EQUALS,
 	LESS_THAN:  LESSGREATER,
 	GREAT_THAN: LESSGREATER,
 	PLUS:       SUM,
@@ -51,7 +51,7 @@ func NewParser(l *Lexer) *Parser {
 
 	p.prefixParseFns = make(map[TokenType]prefixParseFn)
 
-	p.registerPrefix(IDENTIFIER, p.parseIdentifier)
+	p.registerPrefix(IDENT, p.parseIdentifier)
 	p.registerPrefix(INT, p.parseIntegerLiteral)
 	p.registerPrefix(BANG, p.parsePrefixExpression)
 	p.registerPrefix(MINUS, p.parsePrefixExpression)
@@ -63,8 +63,8 @@ func NewParser(l *Lexer) *Parser {
 	p.registerInfix(SLASH, p.parseInfixExpression)
 	p.registerInfix(LESS_THAN, p.parseInfixExpression)
 	p.registerInfix(GREAT_THAN, p.parseInfixExpression)
-	p.registerInfix(EQUAL, p.parseInfixExpression)
-	p.registerInfix(NOT_EQUAL, p.parseInfixExpression)
+	p.registerInfix(EQ, p.parseInfixExpression)
+	p.registerInfix(NOT_EQ, p.parseInfixExpression)
 
 	return p
 }
@@ -210,7 +210,7 @@ func (p *Parser) parseInfixExpression(left Expression) Expression {
 func (p *Parser) parseLetStatement() Statement {
 	stmt := &LetStatement{Token: p.curToken}
 
-	if !p.expectPeek(IDENTIFIER) {
+	if !p.expectPeek(IDENT) {
 		return nil
 	}
 

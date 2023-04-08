@@ -19,54 +19,25 @@ func (l *Lexer) NextToken() Token {
 	l.skipWhitespace()
 
 	switch l.ch {
-	case '=':
-		if l.peakChar() == '=' {
-			last_ch := l.ch
-			l.readChar()
-			tok.Literal = string(last_ch) + string(l.ch)
-			tok.Type = EQUAL
-		} else {
-			tok = newToken(ASSIGN, l.ch)
-		}
-	case ';':
-		tok = newToken(SEMICOLON, l.ch)
-	case '(':
-		tok = newToken(LPAREN, l.ch)
-	case ')':
-		tok = newToken(RPAREN, l.ch)
-	case '{':
-		tok = newToken(LBRACE, l.ch)
-	case '}':
-		tok = newToken(RBRACE, l.ch)
-	case ',':
-		tok = newToken(COMMA, l.ch)
-	case '+':
-		tok = newToken(PLUS, l.ch)
-	case '-':
-		tok = newToken(MINUS, l.ch)
-	case '/':
-		tok = newToken(SLASH, l.ch)
-	case '*':
-		tok = newToken(ASTERISK, l.ch)
-	case '!':
-		if l.peakChar() == '=' {
-			last_ch := l.ch
-			l.readChar()
-			tok.Literal = string(last_ch) + string(l.ch)
-			tok.Type = NOT_EQUAL
-		} else {
-			tok = newToken(BANG, l.ch)
-		}
-	case '<':
-		tok = newToken(LESS_THAN, l.ch)
-	case '>':
-		tok = newToken(GREAT_THAN, l.ch)
 	case 0:
 		tok = eofToken()
+	case '!', '=':
+		if l.peakChar() == '=' {
+			last_ch := l.ch
+			l.readChar()
+			tok.Literal = string(last_ch) + string(l.ch)
+			tok.Type = lookupOperator(tok.Literal)
+		} else {
+			tt := lookupOperator(string(l.ch))
+			tok = newToken(tt, l.ch)
+		}
+	case '+', '-', '/', '*', '<', '>', ';', '(', ')', '{', '}', ',':
+		tt := lookupOperator(string(l.ch))
+		tok = newToken(tt, l.ch)
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
-			tok.Type = LookupIdent(tok.Literal)
+			tok.Type = lookupIdent(tok.Literal)
 			return tok
 		} else if isDigit(l.ch) {
 			tok.Type = INT

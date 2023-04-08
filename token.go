@@ -4,8 +4,8 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	IDENTIFIER = "INDENTIFIER"
-	INT        = "INT"
+	IDENT = "INDENTIFIER"
+	INT   = "INT"
 
 	BANG     = "!"
 	ASSIGN   = "="
@@ -16,8 +16,8 @@ const (
 
 	LESS_THAN  = "<"
 	GREAT_THAN = ">"
-	EQUAL      = "=="
-	NOT_EQUAL  = "!="
+	EQ         = "=="
+	NOT_EQ     = "!="
 
 	COMMA     = ","
 	SEMICOLON = ";"
@@ -37,7 +37,6 @@ const (
 )
 
 type TokenType string
-
 type Token struct {
 	Type    TokenType
 	Literal string
@@ -54,19 +53,47 @@ func eofToken() Token {
 	return Token{Type: EOF, Literal: ""}
 }
 
-var keywords = map[string]TokenType{
-	"fn":     FUNCTION,
-	"let":    LET,
-	"if":     IF,
-	"else":   ELSE,
-	"return": RETURN,
-	"true":   TRUE,
-	"false":  FALSE,
-}
+var (
+	keywords = map[string]TokenType{
+		"fn":     FUNCTION,
+		"let":    LET,
+		"if":     IF,
+		"else":   ELSE,
+		"return": RETURN,
+		"true":   TRUE,
+		"false":  FALSE,
+	}
 
-func LookupIdent(ident string) TokenType {
+	operators = map[string]TokenType{
+		"+":  PLUS,
+		"-":  MINUS,
+		"/":  SLASH,
+		"*":  ASTERISK,
+		"<":  LESS_THAN,
+		">":  GREAT_THAN,
+		"!":  BANG,
+		"=":  ASSIGN,
+		"==": EQ,
+		"!=": NOT_EQ,
+		";":  SEMICOLON,
+		"(":  LPAREN,
+		")":  RPAREN,
+		"{":  LBRACE,
+		"}":  RBRACE,
+		",":  COMMA,
+	}
+)
+
+func lookupIdent(ident string) TokenType {
 	if tok, ok := keywords[ident]; ok {
 		return tok
 	}
-	return IDENTIFIER
+	return IDENT
+}
+
+func lookupOperator(op string) TokenType {
+	if tok, ok := operators[op]; ok {
+		return tok
+	}
+	return ""
 }
