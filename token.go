@@ -23,11 +23,11 @@ const (
 	LBRACE = "{"
 	RBRACE = "}"
 
-    ILLEGAL = "ILLEGAL"
-    EOF     = "EOF"
+	ILLEGAL = "ILLEGAL"
+	EOF     = "EOF"
 
-    IDENT = "INDENTIFIER"
-    INT   = "INT"
+	IDENT = "INDENTIFIER"
+	INT   = "INT"
 
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
