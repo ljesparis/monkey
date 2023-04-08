@@ -1,12 +1,6 @@
 package monkey
 
 const (
-	ILLEGAL = "ILLEGAL"
-	EOF     = "EOF"
-
-	IDENT = "INDENTIFIER"
-	INT   = "INT"
-
 	BANG     = "!"
 	ASSIGN   = "="
 	PLUS     = "+"
@@ -28,6 +22,12 @@ const (
 	RPAREN = ")"
 	LBRACE = "{"
 	RBRACE = "}"
+
+    ILLEGAL = "ILLEGAL"
+    EOF     = "EOF"
+
+    IDENT = "INDENTIFIER"
+    INT   = "INT"
 
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
